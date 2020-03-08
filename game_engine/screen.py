@@ -16,17 +16,23 @@ class Screen:
         pass
 
     def process_event(self, event):
-        pass
+        for entity in self.entities:
+            entity.process_event(event)
 
     def refresh(self):
         dirty_rects = self.draw_all()
         self.update(dirty_rects)
 
     def draw_all(self):
+        self.draw_screen()
         dirty_rects = []
         for entity in self.entities:
             dirty_rects.extend(entity.update(self.surface))
         return dirty_rects
 
-    def update(self, rectangle_list=[]):
+    def update(self, rectangle_list=None):
+        rectangle_list = rectangle_list or []
         pg.display.update(rectangle_list)
+
+    def draw_screen(self):
+        self.surface.fill((0, 0, 0))
