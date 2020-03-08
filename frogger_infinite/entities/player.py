@@ -34,10 +34,12 @@ class Player(pg.sprite.Sprite):
     def get_size(self):
         return self.image.width, self.image.height
 
-    def update(self, surface: pg.Surface) -> List[pg.Rect]:
+    def update(self, surface: pg.Surface):
         if self.next_move:
             self.move(self.next_move)
             self.next_move = None
+
+    def draw(self, surface: pg.Surface) -> List[pg.Rect]:
         if self.dirty_rects:
             surface.blit(self.image, self.rect)
             return self.get_rects_to_update()

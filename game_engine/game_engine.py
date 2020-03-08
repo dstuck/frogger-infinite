@@ -1,5 +1,6 @@
 import pygame as pg
 
+from frogger_infinite.entities.player import Player
 from frogger_infinite.screens.frogger_screen import FroggerScreen
 from game_engine import SCREEN_SIZE
 
@@ -13,6 +14,11 @@ class GameEngine:
         self.fps = 60
         self.elapsed = 0
         self.complete = False
+        init_position = (
+            self.surface.get_size()[1]*0.5,
+            self.surface.get_size()[0] - Player.IMAGE_SIZE[0] * 0.5,
+        )
+        self.player = Player(init_position)
         self.current_screen = None
         self.screens = {
             'frogger_screen': FroggerScreen(self.surface)
@@ -32,6 +38,7 @@ class GameEngine:
 
     def set_current_screen(self, screen_name):
         self.current_screen = self.screens[screen_name]
+        self.current_screen.set_player(self.player)
 
     def process_event(self, event):
         self.current_screen.process_event(event)
@@ -42,7 +49,9 @@ class GameEngine:
                 self.complete = True
 
             self.process_event(event)
-        self.current_screen.refresh()
+        # self.current_screen.refresh()
+        self.current_screen.update()
+        self.current_screen.draw()
 
         self.elapsed = self.clock.tick(self.fps)
 
