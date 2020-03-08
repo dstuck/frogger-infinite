@@ -9,5 +9,9 @@ class FroggerScreen(Screen):
             self.surface.get_size()[1]*0.5,
             self.surface.get_size()[0] - Player.IMAGE_SIZE[0] * 0.5,
         )
-        player = Player(init_position, 25)
+        player = Player(init_position)
         self.entities.append(player)
+        self.draw_screen()
+
+    def draw_screen(self):
+        self.surface.fill((0, 40, 0))
