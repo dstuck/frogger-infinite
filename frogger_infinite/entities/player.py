@@ -19,6 +19,7 @@ class Player(pg.sprite.Sprite):
 
         self.image = pg.image.load(get_asset_file('player.png'))
         self.rect = self.image.get_rect()
+        self.proposed_rect = None
         self.position = init_position
         self.next_move = None
 
@@ -34,7 +35,7 @@ class Player(pg.sprite.Sprite):
     def get_size(self):
         return self.image.width, self.image.height
 
-    def update(self, surface: pg.Surface):
+    def update(self):
         if self.next_move:
             self.move(self.next_move)
             self.next_move = None
@@ -45,9 +46,20 @@ class Player(pg.sprite.Sprite):
             return self.get_rects_to_update()
         return []
 
-    def move(self, move_coord):
-        new_position = (self.position[0] + move_coord[0], self.position[1] + move_coord[1])
-        self.position = new_position
+    def propose_move(self):
+        if self.next_move:
+            new_position = (
+                self.position[0] + self.next_move[0],
+                self.position[1] + self.next_move[1]
+            )
+            self.proposed_rect = self.rect.copy()
+            self.proposed_rect.center = new_position
+            self.next_move = None
+            return self.proposed_rect
+
+    def set_rect(self, rect):
+        self.dirty_rects.append(self.rect.copy())
+        self.rect = rect
 
     def get_rects_to_update(self):
         rects_to_update = self.dirty_rects
