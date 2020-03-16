@@ -3,7 +3,7 @@ import pygame as pg
 from frogger_infinite.entities.player import Player
 from frogger_infinite.screens.frogger_fields_screen import FroggerFieldsScreen
 from frogger_infinite.screens.frogger_main_screen import FroggerMainScreen
-from game_engine import SCREEN_SIZE
+from frogger_infinite import SCREEN_SIZE
 
 
 class GameEngine:
@@ -41,6 +41,7 @@ class GameEngine:
     def set_current_screen(self, screen_name):
         self.current_screen = self.screens[screen_name]
         self.current_screen.set_player(self.player)
+        self.current_screen.refresh_screen()
 
     def process_event(self, event):
         self.current_screen.process_event(event)

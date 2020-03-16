@@ -19,8 +19,13 @@ class Screen:
         self.static_entities = []
         self.dynamic_entities = []
         self.pressed_keys = set()
+        self.image = self.load_image()
 
         self.setup_screen()
+
+    @abstractmethod
+    def load_image(self):
+        pass
 
     @property
     def entities(self):
@@ -54,14 +59,28 @@ class Screen:
         self.pressed_keys = set()
 
     def draw(self):
-        self.draw_screen()
         dirty_rects = []
         for entity in self.entities:
-            dirty_rects.extend(entity.draw(self.surface))
+            entity_dirty_rects = entity.get_rects_to_update()
+            if entity_dirty_rects:
+                dirty_rects.extend(entity_dirty_rects)
+                self.draw_screen(entity_dirty_rects)
+                entity.draw(self.surface)
+        ## Update vision
+        # for rect in dirty_rects:
+        #     self.surface.fill((60, 0, 0), rect)
         pg.display.update(dirty_rects)
 
-    def draw_screen(self):
-        self.surface.fill((0, 0, 0))
+    def draw_screen(self, rects):
+        self.surface.blits(tuple((self.image, (rect.x, rect.y), rect) for rect in rects))
+        # test_image = pg.Surface(self.get_size())
+        # test_image.fill((100, 100, 100))
+        # self.surface.blit(test_image, (0,0), pg.Rect(224, 454, 53, 39))
+
+    def refresh_screen(self):
+        self.surface.blit(self.image, (0, 0))
+        for entity in self.entities:
+            entity.draw(self.surface)
 
     def in_bounds(self, new_rect):
         return not (
