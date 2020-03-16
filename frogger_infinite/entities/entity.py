@@ -13,7 +13,7 @@ class Entity(pg.sprite.Sprite):
     def __init__(self, init_position, *groups):
         self.dirty_rects = []
 
-        self.image = self.load_image()
+        self.image = self.load_image().convert()
         self.rect = self.image.get_rect()
         self.proposed_rect = None
         self.position = init_position
@@ -39,10 +39,7 @@ class Entity(pg.sprite.Sprite):
         pass
 
     def draw(self, surface: pg.Surface) -> List[pg.Rect]:
-        if self.dirty_rects:
-            surface.blit(self.image, self.rect)
-            return self.get_rects_to_update()
-        return []
+        return surface.blit(self.image, self.rect)
 
     def set_rect(self, rect):
         self.dirty_rects.append(self.rect.copy())
@@ -50,8 +47,9 @@ class Entity(pg.sprite.Sprite):
 
     def get_rects_to_update(self):
         rects_to_update = self.dirty_rects
-        rects_to_update.append(self.rect.copy())
-        self.dirty_rects = []
+        if rects_to_update:
+            rects_to_update.append(self.rect.copy())
+            self.dirty_rects = []
         return rects_to_update
 
     def process_event(self, event):

@@ -1,5 +1,3 @@
-from typing import List
-
 import pygame as pg
 
 from frogger_infinite.entities.entity import Entity
@@ -14,7 +12,9 @@ class Player(Entity):
         super().__init__(init_position, *groups)
 
     def load_image(self):
-        return pg.image.load(get_asset_file('player.png'))
+        image = pg.image.load(get_asset_file('player.png'))
+        image.set_colorkey((255, 255, 255))
+        return image
 
     def propose_move(self):
         if self.next_move:

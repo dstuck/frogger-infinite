@@ -41,6 +41,7 @@ class GameEngine:
     def set_current_screen(self, screen_name):
         self.current_screen = self.screens[screen_name]
         self.current_screen.set_player(self.player)
+        self.current_screen.refresh_screen()
 
     def process_event(self, event):
         self.current_screen.process_event(event)
