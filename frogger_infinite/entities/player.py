@@ -18,10 +18,7 @@ class Player(Entity):
 
     def propose_move(self):
         if self.next_move:
-            new_position = (
-                self.position[0] + self.next_move[0],
-                self.position[1] + self.next_move[1]
-            )
+            new_position = self.move(*self.next_move, inplace=False)
             self.proposed_rect = self.rect.copy()
             self.proposed_rect.center = new_position
             self.next_move = None

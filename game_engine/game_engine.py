@@ -3,7 +3,7 @@ import pygame as pg
 from frogger_infinite.entities.player import Player
 from frogger_infinite.screens.frogger_fields_screen import FroggerFieldsScreen
 from frogger_infinite.screens.frogger_main_screen import FroggerMainScreen
-from game_engine import SCREEN_SIZE
+from frogger_infinite import SCREEN_SIZE
 
 
 class GameEngine:

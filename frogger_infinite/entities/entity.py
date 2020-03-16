@@ -54,3 +54,10 @@ class Entity(pg.sprite.Sprite):
 
     def process_event(self, event):
         pass
+
+    def move(self, x, y, inplace=True):
+        cur_x, cur_y = self.position
+        new_position = (cur_x + x, cur_y + y)
+        if inplace:
+            self.position = new_position
+        return new_position
