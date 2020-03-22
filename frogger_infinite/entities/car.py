@@ -21,3 +21,6 @@ class Car(Entity):
         self.move(-self.speed, 0)
         if self.rect.left < 0:
             self.move(SCREEN_SIZE[0], 0)
+
+    def is_deadly(self):
+        return True

@@ -3,6 +3,8 @@ from abc import abstractmethod
 
 import pygame as pg
 
+import game_engine.game_states as game_states
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -20,6 +22,7 @@ class Screen:
         self.dynamic_entities = []
         self.pressed_keys = set()
         self.image = self.load_image()
+        self.new_state = None
 
         self.setup_screen()
 
@@ -52,8 +55,11 @@ class Screen:
             if new_screen:
                 return new_screen
 
-            if self.in_bounds(new_rect):
+            if self.in_bounds(new_rect) and not self.check_collisions(new_rect):
                 self.player.set_rect(new_rect)
+        else:
+            self.check_collisions(self.player.rect)
+
         for entity in self.entities:
             entity.update()
         self.pressed_keys = set()
@@ -89,6 +95,15 @@ class Screen:
             or self._is_past_down(new_rect)
             or self._is_past_right(new_rect)
         )
+
+    def check_collisions(self, new_rect):
+        for entity in self.entities:
+            if entity != self.player and entity.is_solid() and entity.rect.colliderect(new_rect):
+                if entity.is_deadly():
+                    self.new_state = game_states.DEAD
+                LOGGER.debug("Colliding with", entity)
+                return True
+        return False
 
     def _is_past_up(self, rect):
         return rect.top < 0

@@ -61,3 +61,9 @@ class Entity(pg.sprite.Sprite):
         if inplace:
             self.position = new_position
         return new_position
+
+    def is_deadly(self):
+        return False
+
+    def is_solid(self):
+        return True
