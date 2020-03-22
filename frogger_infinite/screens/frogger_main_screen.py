@@ -9,7 +9,26 @@ class FroggerMainScreen(Screen):
         self.adjacent_screens['south'] = 'frogger_fields'
         screen_x, screen_y = self.get_size()
         self.dynamic_entities.extend([
-            Car((screen_x * 0.9, screen_y * 0.3))
+            Car(
+                (screen_x * 0.1, screen_y * 0.2),
+                direction=(1, 0),
+                image_name="car_R",
+            ),
+            Car(
+                (screen_x * 0.5, screen_y * 0.2),
+                direction=(1, 0),
+                image_name="car_R",
+            ),
+            Car(
+                (screen_x * 0.9, screen_y * 0.4),
+                direction=(-1, 0),
+                image_name="blue_truck_L",
+            ),
+            Car(
+                (screen_x * 0.4, screen_y * 0.6),
+                direction=(1, 0),
+                image_name="blue_truck_R",
+            ),
         ])
 
     def load_image(self):
