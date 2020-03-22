@@ -4,6 +4,7 @@ from frogger_infinite.entities.player import Player
 from frogger_infinite.screens.frogger_fields_screen import FroggerFieldsScreen
 from frogger_infinite.screens.frogger_main_screen import FroggerMainScreen
 from frogger_infinite import SCREEN_SIZE
+import game_engine.game_states as game_states
 
 
 class GameEngine:
@@ -15,16 +16,20 @@ class GameEngine:
         self.fps = 60
         self.elapsed = 0
         self.complete = False
-        init_position = (
-            self.surface.get_size()[1]*0.5,
-            self.surface.get_size()[0] - Player.IMAGE_SIZE[0] * 0.5,
-        )
-        self.player = Player(init_position)
         self.current_screen = None
         self.screens = {
             'frogger_main': FroggerMainScreen(self.surface),
             'frogger_fields': FroggerFieldsScreen(self.surface),
         }
+        self.reset_player()
+        self.state = game_states.RUNNING
+
+    def reset_player(self):
+        init_position = (
+            self.surface.get_size()[1]*0.5,
+            self.surface.get_size()[0] - Player.IMAGE_SIZE[0] * 0.5,
+        )
+        self.player = Player(init_position)
         self.set_current_screen('frogger_main')
 
     def __enter__(self):
@@ -47,16 +52,24 @@ class GameEngine:
         self.current_screen.process_event(event)
 
     def tick(self):
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                self.complete = True
+        if self.state == game_states.RUNNING:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.complete = True
 
-            self.process_event(event)
-        new_screen = self.current_screen.update()
-        if new_screen:
-            self.set_current_screen(new_screen)
+                self.process_event(event)
+            new_screen = self.current_screen.update()
+            if new_screen:
+                self.set_current_screen(new_screen)
 
-        self.current_screen.draw()
+            self.current_screen.draw()
+            if self.current_screen.new_state:
+                self.state = self.current_screen.new_state
+                self.current_screen.new_state = None
+
+        elif self.state == game_states.DEAD:
+            self.reset_player()
+            self.state = game_states.RUNNING
 
         self.elapsed = self.clock.tick(self.fps)
 
