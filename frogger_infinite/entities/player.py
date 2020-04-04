@@ -14,7 +14,7 @@ class Player(Entity):
 
     def load_image(self):
         image = pg.image.load(get_asset_file('player.png'))
-        image.set_colorkey((255, 255, 255))
+        image.set_colorkey((0, 0, 0))
         return image
 
     def propose_move(self):
