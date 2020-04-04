@@ -1,6 +1,8 @@
 import pygame as pg
 
 from frogger_infinite.entities.car import Car
+from frogger_infinite.entities.truck import Truck
+from game_engine.asset_utils import get_asset_file
 from game_engine.screen import Screen
 
 
@@ -19,19 +21,15 @@ class FroggerMainScreen(Screen):
                 direction=(1, 0),
                 image_name="car_R",
             ),
-            Car(
+            Truck(
                 (screen_x * 0.9, screen_y * 0.4),
-                direction=(-1, 0),
-                image_name="blue_truck_L",
             ),
             Car(
                 (screen_x * 0.4, screen_y * 0.6),
                 direction=(1, 0),
-                image_name="blue_truck_R",
+                image_name="car_R2",
             ),
         ])
 
     def load_image(self):
-        image = pg.Surface(self.get_size())
-        image.fill((0, 0, 40))
-        return image
+        return pg.image.load(get_asset_file('background.png'))

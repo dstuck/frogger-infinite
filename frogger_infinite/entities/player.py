@@ -1,13 +1,14 @@
 import pygame as pg
 
 from frogger_infinite.entities.entity import Entity
+from frogger_infinite import GridStruct
 from game_engine.asset_utils import get_asset_file
 
 
 class Player(Entity):
-    IMAGE_SIZE = (53, 39)
+    IMAGE_SIZE = (GridStruct.GRID_SIZE, GridStruct.GRID_SIZE)
 
-    def __init__(self, init_position, speed=25, *groups):
+    def __init__(self, init_position, speed=GridStruct.GRID_SIZE, *groups):
         self.speed = speed
         super().__init__(init_position, *groups)
 

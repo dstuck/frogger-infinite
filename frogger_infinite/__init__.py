@@ -1,1 +1,6 @@
-SCREEN_SIZE = (500, 500)
+SCREEN_SIZE = (480, 600)
+class GridStruct():
+    GRID_SIZE = 40
+    GRID_OFFSET_X = 20
+    GRID_OFFSET_Y = 0
+    GRID_MAX_INDEXES = (11, 15)
