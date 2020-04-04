@@ -1,14 +1,15 @@
 import pygame as pg
 
 from frogger_infinite import SCREEN_SIZE
+from frogger_infinite import GridStruct
 from frogger_infinite.entities.entity import Entity
 from game_engine.asset_utils import get_asset_file
 
 
 class Car(Entity):
-    IMAGE_SIZE = (53, 39)
+    IMAGE_SIZE = (GridStruct.GRID_SIZE, GridStruct.GRID_SIZE)
 
-    def __init__(self, init_position, direction=None, image_name=None, speed=2.5, *groups):
+    def __init__(self, init_position, direction=None, image_name=None, speed=1, *groups):
         self.image_name = image_name or 'car_R'
         self.direction = direction or (1, 0)
         self.speed = speed
@@ -16,7 +17,7 @@ class Car(Entity):
 
     def load_image(self):
         image = pg.image.load(get_asset_file('{}.png'.format(self.image_name)))
-        image.set_colorkey((255, 255, 255))
+        image.set_colorkey((0, 0, 0))
         return image
 
     def update(self):
