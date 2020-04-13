@@ -22,13 +22,13 @@ class Car(Entity):
 
     def update(self):
         self.move(self.speed * self.direction[0], self.speed * self.direction[1])
-        if self.rect.left < 0:
+        if self.rect.center[0] < 0:
             self.move(SCREEN_SIZE[0], 0)
-        if self.rect.right > SCREEN_SIZE[0]:
+        if self.rect.center[0] > SCREEN_SIZE[0]:
             self.move(-SCREEN_SIZE[0], 0)
-        if self.rect.top < 0:
+        if self.rect.center[1] < 0:
             self.move(0, SCREEN_SIZE[1])
-        if self.rect.bottom > SCREEN_SIZE[1]:
+        if self.rect.center[1] > SCREEN_SIZE[1]:
             self.move(0, -SCREEN_SIZE[1])
 
     def is_deadly(self):
