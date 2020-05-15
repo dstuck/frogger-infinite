@@ -32,7 +32,7 @@ class Screen:
 
     @property
     def entities(self):
-        return [self.player, *self.static_entities, *self.dynamic_entities]
+        return [self.player, *self.dynamic_entities, *self.static_entities]
 
     def get_size(self):
         return self.surface.get_width(), self.surface.get_height()
@@ -66,7 +66,7 @@ class Screen:
 
     def draw(self):
         dirty_rects = []
-        for entity in self.entities:
+        for entity in reversed(self.entities):
             entity_dirty_rects = entity.get_rects_to_update()
             if entity_dirty_rects:
                 dirty_rects.extend(entity_dirty_rects)
@@ -98,11 +98,14 @@ class Screen:
 
     def check_collisions(self, new_rect):
         for entity in self.entities:
-            if entity != self.player and entity.is_solid() and entity.rect.colliderect(new_rect):
+            if entity != self.player and entity.rect.colliderect(new_rect):
                 if entity.is_deadly():
                     self.new_state = game_states.DEAD
                 LOGGER.debug("Colliding with", entity)
-                return True
+                if entity.is_solid():
+                    return True
+                else:
+                    self.player.make_dirty()
         return False
 
     def _is_past_up(self, rect):

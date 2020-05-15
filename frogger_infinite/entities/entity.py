@@ -25,7 +25,7 @@ class Entity(pg.sprite.Sprite):
 
     @position.setter
     def position(self, value):
-        self.dirty_rects.append(self.rect.copy())
+        self.make_dirty()
         self.rect.center = value
 
     @abstractmethod
@@ -37,6 +37,9 @@ class Entity(pg.sprite.Sprite):
 
     def update(self):
         pass
+
+    def make_dirty(self):
+        self.dirty_rects.append(self.rect.copy())
 
     def draw(self, surface: pg.Surface) -> List[pg.Rect]:
         return surface.blit(self.image, self.rect)
