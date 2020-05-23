@@ -21,7 +21,7 @@ class ConstantMotionEntity(Entity):
         return image
 
     def update(self):
-        self.move(self.speed * self.direction[0], self.speed * self.direction[1])
+        self.add_next_move(i * self.speed for i in self.direction)
         if self.rect.center[0] < 0:
             self.move(SCREEN_SIZE[0], 0)
         if self.rect.center[0] > SCREEN_SIZE[0]:

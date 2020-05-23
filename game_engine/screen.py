@@ -49,20 +49,23 @@ class Screen:
             entity.process_event(event)
 
     def update(self):
-        new_rect = self.player.propose_move()
-        if new_rect:
-            new_screen = self.check_for_new_screen(new_rect)
-            if new_screen:
-                return new_screen
-
-            if self.in_bounds(new_rect) and not self.check_collisions(new_rect):
-                self.player.set_rect(new_rect)
-        else:
-            self.check_collisions(self.player.rect)
-
         for entity in self.entities:
             entity.update()
+            self.attempt_move(entity)
+
+        if self.player.is_dead:
+            self.new_state = game_states.DEAD
         self.pressed_keys = set()
+
+    def attempt_move(self, entity):
+        if entity.next_move or entity:
+            next_position = entity.pop_next_position()
+            if not self.check_entity_collisions(entity, next_position):
+                entity.position = next_position
+        elif entity == self.player:
+            next_position = entity.position
+            if not self.check_entity_collisions(entity, next_position):
+                entity.position = next_position
 
     def draw(self):
         dirty_rects = []
@@ -96,16 +99,23 @@ class Screen:
             or self._is_past_right(new_rect)
         )
 
-    def check_collisions(self, new_rect):
-        for entity in self.entities:
-            if entity != self.player and entity.rect.colliderect(new_rect):
-                if entity.is_deadly():
-                    self.new_state = game_states.DEAD
-                LOGGER.debug("Colliding with", entity)
-                if entity.is_solid():
+    def check_entity_collisions(self, entity, next_position):
+        if not entity.is_solid():
+            return False
+        proposed_rect = entity.rect.copy()
+        proposed_rect.center = next_position
+        for other in self.entities:
+            if other == entity:
+                continue
+            if other.rect.colliderect(entity):
+                entity.collide(other)
+                other.collide(entity)
+                LOGGER.debug("Colliding a {} with {}".format(
+                    entity.__class__.__name__,
+                    other.__class__.__name__)
+                )
+                if other.is_solid():
                     return True
-                else:
-                    self.player.make_dirty()
         return False
 
     def _is_past_up(self, rect):

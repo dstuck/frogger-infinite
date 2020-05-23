@@ -10,6 +10,7 @@ class Player(Entity):
 
     def __init__(self, init_position, speed=GridStruct.GRID_SIZE, *groups):
         self.speed = speed
+        self.is_dead = False
         super().__init__(init_position, *groups)
 
     def load_image(self):
@@ -25,7 +26,14 @@ class Player(Entity):
             self.next_move = None
             return self.proposed_rect
 
+    def collide(self, other_entity):
+        self.make_dirty()
+        if other_entity.is_deadly():
+            self.is_dead = True
+        # if other_entity.is_ridable():
+        #     self.add_next_move(other_entity.next_move)
+
     def process_event(self, event):
         if event.type == pg.KEYDOWN:
             if event.key in self.DIRECT_DICT:
-                self.next_move = tuple(i * self.speed for i in self.DIRECT_DICT[event.key])
+                self.add_next_move(tuple(i * self.speed for i in self.DIRECT_DICT[event.key]))
