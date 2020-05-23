@@ -11,5 +11,5 @@ class Log(ConstantMotionEntity):
     def is_solid(self):
         return False
 
-    def is_ridable(self):
-        return True
+    def is_rideable(self):
+        return self.velocity

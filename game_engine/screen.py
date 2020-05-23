@@ -82,9 +82,6 @@ class Screen:
 
     def draw_screen(self, rects):
         self.surface.blits(tuple((self.image, (rect.x, rect.y), rect) for rect in rects))
-        # test_image = pg.Surface(self.get_size())
-        # test_image.fill((100, 100, 100))
-        # self.surface.blit(test_image, (0,0), pg.Rect(224, 454, 53, 39))
 
     def refresh_screen(self):
         self.surface.blit(self.image, (0, 0))

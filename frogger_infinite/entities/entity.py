@@ -9,6 +9,7 @@ class Entity(pg.sprite.Sprite):
                    pg.K_RIGHT: (1, 0),
                    pg.K_UP: (0, -1),
                    pg.K_DOWN: (0, 1)}
+    FIT_BUFFER = -10
 
     def __init__(self, init_position, *groups):
         self.dirty_rects = []
@@ -85,8 +86,11 @@ class Entity(pg.sprite.Sprite):
     def is_solid(self):
         return True
 
-    def is_ridable(self):
-        return False
+    def is_rideable(self):
+        return None
 
     def collide(self, other_entity):
         pass
+
+    def fits_on_rect(self, rect):
+        return rect.contains(self.rect.inflate(self.FIT_BUFFER, self.FIT_BUFFER))

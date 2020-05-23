@@ -30,8 +30,8 @@ class Player(Entity):
         self.make_dirty()
         if other_entity.is_deadly():
             self.is_dead = True
-        # if other_entity.is_ridable():
-        #     self.add_next_move(other_entity.next_move)
+        if other_entity.is_rideable() and self.fits_on_rect(other_entity.rect):
+            self.add_next_move(other_entity.is_rideable())
 
     def process_event(self, event):
         if event.type == pg.KEYDOWN:

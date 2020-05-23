@@ -13,6 +13,7 @@ class ConstantMotionEntity(Entity):
         self.image_name = image_name
         self.direction = direction
         self.speed = speed
+        self.velocity = tuple(i * self.speed for i in self.direction)
         super().__init__(init_position, *groups)
 
     def load_image(self):
@@ -21,7 +22,7 @@ class ConstantMotionEntity(Entity):
         return image
 
     def update(self):
-        self.add_next_move(i * self.speed for i in self.direction)
+        self.add_next_move(self.velocity)
         if self.rect.center[0] < 0:
             self.move(SCREEN_SIZE[0], 0)
         if self.rect.center[0] > SCREEN_SIZE[0]:
