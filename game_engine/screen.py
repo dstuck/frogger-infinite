@@ -69,15 +69,16 @@ class Screen:
 
     def draw(self):
         dirty_rects = []
+        draw_methods_to_run = []
         for entity in reversed(self.entities):
             entity_dirty_rects = entity.get_rects_to_update()
             if entity_dirty_rects:
                 dirty_rects.extend(entity_dirty_rects)
                 self.draw_screen(entity_dirty_rects)
-                entity.draw(self.surface)
-        ## Update vision
-        # for rect in dirty_rects:
-        #     self.surface.fill((60, 0, 0), rect)
+                # don't want to overwrite previous entities with background so draw entities later
+                draw_methods_to_run.append(entity.draw)
+        for draw_method in draw_methods_to_run:
+            draw_method(self.surface)
         pg.display.update(dirty_rects)
 
     def draw_screen(self, rects):
