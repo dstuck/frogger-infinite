@@ -1,6 +1,7 @@
 import pygame as pg
 
 from frogger_infinite.entities.car import Car
+from frogger_infinite.entities.log import Log
 from frogger_infinite.entities.truck import Truck
 from game_engine.asset_utils import get_asset_file
 from game_engine.grid_utils import get_grid_center
@@ -44,7 +45,42 @@ class FroggerMainScreen(Screen):
                 get_grid_center(*coord),
             ) for coord in [(3, 9), (8, 9)]
         ])
-
-
+        self.dynamic_entities.extend([
+            Log(
+                get_grid_center(*coord),
+                direction=(-1, 0),
+                image_name="turtle_3",
+            ) for coord in [(1, 7), (4, 7), (7, 7), (10, 7)]
+        ])
+        self.dynamic_entities.extend([
+            Log(
+                get_grid_center(*coord),
+                direction=(1, 0),
+                image_name="tree_1",
+            ) for coord in [(2, 6), (6, 6), (10, 6)]
+        ])
+        self.dynamic_entities.extend([
+            Log(
+                get_grid_center(*coord),
+                direction=(1, 0),
+                image_name="tree_2",
+                speed=2
+            ) for coord in [(2, 5), (8, 5)]
+        ])
+        self.dynamic_entities.extend([
+            Log(
+                get_grid_center(*coord),
+                direction=(-1, 0),
+                image_name="turtle_2",
+            ) for coord in [(1, 4), (4, 4), (7, 4), (10, 4)]
+        ])
+        self.dynamic_entities.extend([
+            Log(
+                get_grid_center(*coord),
+                direction=(1, 0),
+                image_name="tree_3",
+                speed=1.5
+            ) for coord in [(2, 3), (6, 3), (10, 3)]
+        ])
     def load_image(self):
         return pg.image.load(get_asset_file('background.png'))

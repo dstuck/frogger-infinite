@@ -32,7 +32,7 @@ class Screen:
 
     @property
     def entities(self):
-        return [self.player, *self.static_entities, *self.dynamic_entities]
+        return [self.player, *self.dynamic_entities, *self.static_entities]
 
     def get_size(self):
         return self.surface.get_width(), self.surface.get_height()
@@ -49,24 +49,27 @@ class Screen:
             entity.process_event(event)
 
     def update(self):
-        new_rect = self.player.propose_move()
-        if new_rect:
-            new_screen = self.check_for_new_screen(new_rect)
-            if new_screen:
-                return new_screen
-
-            if self.in_bounds(new_rect) and not self.check_collisions(new_rect):
-                self.player.set_rect(new_rect)
-        else:
-            self.check_collisions(self.player.rect)
-
         for entity in self.entities:
             entity.update()
+            self.attempt_move(entity)
+
+        if self.player.is_dead:
+            self.new_state = game_states.DEAD
         self.pressed_keys = set()
+
+    def attempt_move(self, entity):
+        if entity.next_move or entity:
+            next_position = entity.pop_next_position()
+            if not self.check_entity_collisions(entity, next_position):
+                entity.position = next_position
+        elif entity == self.player:
+            next_position = entity.position
+            if not self.check_entity_collisions(entity, next_position):
+                entity.position = next_position
 
     def draw(self):
         dirty_rects = []
-        for entity in self.entities:
+        for entity in reversed(self.entities):
             entity_dirty_rects = entity.get_rects_to_update()
             if entity_dirty_rects:
                 dirty_rects.extend(entity_dirty_rects)
@@ -79,9 +82,6 @@ class Screen:
 
     def draw_screen(self, rects):
         self.surface.blits(tuple((self.image, (rect.x, rect.y), rect) for rect in rects))
-        # test_image = pg.Surface(self.get_size())
-        # test_image.fill((100, 100, 100))
-        # self.surface.blit(test_image, (0,0), pg.Rect(224, 454, 53, 39))
 
     def refresh_screen(self):
         self.surface.blit(self.image, (0, 0))
@@ -96,13 +96,23 @@ class Screen:
             or self._is_past_right(new_rect)
         )
 
-    def check_collisions(self, new_rect):
-        for entity in self.entities:
-            if entity != self.player and entity.is_solid() and entity.rect.colliderect(new_rect):
-                if entity.is_deadly():
-                    self.new_state = game_states.DEAD
-                LOGGER.debug("Colliding with", entity)
-                return True
+    def check_entity_collisions(self, entity, next_position):
+        if not entity.is_solid():
+            return False
+        proposed_rect = entity.rect.copy()
+        proposed_rect.center = next_position
+        for other in self.entities:
+            if other == entity:
+                continue
+            if other.rect.colliderect(entity):
+                entity.collide(other)
+                other.collide(entity)
+                LOGGER.debug("Colliding a {} with {}".format(
+                    entity.__class__.__name__,
+                    other.__class__.__name__)
+                )
+                if other.is_solid():
+                    return True
         return False
 
     def _is_past_up(self, rect):

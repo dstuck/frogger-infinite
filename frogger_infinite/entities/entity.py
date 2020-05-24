@@ -9,6 +9,7 @@ class Entity(pg.sprite.Sprite):
                    pg.K_RIGHT: (1, 0),
                    pg.K_UP: (0, -1),
                    pg.K_DOWN: (0, 1)}
+    FIT_BUFFER = -10
 
     def __init__(self, init_position, *groups):
         self.dirty_rects = []
@@ -25,7 +26,7 @@ class Entity(pg.sprite.Sprite):
 
     @position.setter
     def position(self, value):
-        self.dirty_rects.append(self.rect.copy())
+        self.make_dirty()
         self.rect.center = value
 
     @abstractmethod
@@ -37,6 +38,9 @@ class Entity(pg.sprite.Sprite):
 
     def update(self):
         pass
+
+    def make_dirty(self):
+        self.dirty_rects.append(self.rect.copy())
 
     def draw(self, surface: pg.Surface) -> List[pg.Rect]:
         return surface.blit(self.image, self.rect)
@@ -55,6 +59,20 @@ class Entity(pg.sprite.Sprite):
     def process_event(self, event):
         pass
 
+    def pop_next_position(self):
+        move_vec = self.next_move
+        self.next_move = None
+        if not move_vec:
+            return self.position
+        else:
+            return tuple(i + j for i, j in zip(self.position, move_vec))
+
+    def add_next_move(self, additional_move):
+        if not self.next_move:
+            self.next_move = additional_move
+        else:
+            self.next_move = tuple(i + j for i, j in zip(self.next_move, additional_move))
+
     def move(self, x, y, inplace=True):
         cur_x, cur_y = self.position
         new_position = (cur_x + x, cur_y + y)
@@ -67,3 +85,12 @@ class Entity(pg.sprite.Sprite):
 
     def is_solid(self):
         return True
+
+    def is_rideable(self):
+        return None
+
+    def collide(self, other_entity):
+        pass
+
+    def fits_on_rect(self, rect):
+        return rect.contains(self.rect.inflate(self.FIT_BUFFER, self.FIT_BUFFER))

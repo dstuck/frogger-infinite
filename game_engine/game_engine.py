@@ -18,6 +18,7 @@ class GameEngine:
         self.elapsed = 0
         self.complete = False
         self.current_screen = None
+        self.player = None
         self.screens = {
             'frogger_main': FroggerMainScreen(self.surface),
             'frogger_fields': FroggerFieldsScreen(self.surface),
