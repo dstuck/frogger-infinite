@@ -53,17 +53,14 @@ class Screen:
             entity.update()
             self.attempt_move(entity)
 
-        if self.player.is_dead:
+        if self.player.is_dead or self.player.has_won:
             self.new_state = game_states.DEAD
         self.pressed_keys = set()
 
     def attempt_move(self, entity):
-        if entity.next_move or entity:
+        ### For some reason it looks like we don't actually handle not colliding with solid objects
+        if entity.next_move or entity == self.player:
             next_position = entity.pop_next_position()
-            if not self.check_entity_collisions(entity, next_position):
-                entity.position = next_position
-        elif entity == self.player:
-            next_position = entity.position
             if not self.check_entity_collisions(entity, next_position):
                 entity.position = next_position
 
@@ -106,12 +103,9 @@ class Screen:
             if other == entity:
                 continue
             if other.rect.colliderect(entity):
+
                 entity.collide(other)
                 other.collide(entity)
-                LOGGER.debug("Colliding a {} with {}".format(
-                    entity.__class__.__name__,
-                    other.__class__.__name__)
-                )
                 if other.is_solid():
                     return True
         return False

@@ -25,13 +25,13 @@ class ConstantMotionEntity(Entity):
     def update(self):
         self.add_next_move(self.velocity)
         if self.rect.center[0] < 0:
-            self.move(SCREEN_SIZE[0], 0)
+            self.add_next_move((SCREEN_SIZE[0], 0))
         if self.rect.center[0] > SCREEN_SIZE[0]:
-            self.move(-SCREEN_SIZE[0], 0)
+            self.add_next_move((-SCREEN_SIZE[0], 0))
         if self.rect.center[1] < 0:
-            self.move(0, SCREEN_SIZE[1])
+            self.add_next_move((0, SCREEN_SIZE[1]))
         if self.rect.center[1] > SCREEN_SIZE[1]:
-            self.move(0, -SCREEN_SIZE[1])
+            self.add_next_move((0, -SCREEN_SIZE[1]))
 
     def is_deadly(self):
         return False

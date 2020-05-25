@@ -1,6 +1,7 @@
 import pygame as pg
 
 from frogger_infinite.entities.car import Car
+from frogger_infinite.entities.lilly_pad import LillyPad
 from frogger_infinite.entities.log import Log
 from frogger_infinite.entities.truck import Truck
 from game_engine.asset_utils import get_asset_file
@@ -84,6 +85,12 @@ class FroggerMainScreen(Screen):
                 speed=1.5,
                 clear_color=(255, 255, 255),
             ) for coord in [(2, 3), (6, 3), (10, 3)]
+        ])
+        self.dynamic_entities.extend([
+            LillyPad(
+                get_grid_center(*coord),
+
+            ) for coord in [(0, 2), (2.5, 2), (5, 2), (7.5, 2), (10, 2)]
         ])
     def load_image(self):
         return pg.image.load(get_asset_file('background.png'))
