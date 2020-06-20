@@ -14,7 +14,8 @@ class Entity(pg.sprite.Sprite):
     def __init__(self, init_position, *groups):
         self.dirty_rects = []
 
-        self.image = self.load_image().convert()
+        self.image = None
+        self.refresh_image()
         self.rect = self.image.get_rect()
         self.proposed_rect = None
         self.position = init_position
@@ -32,6 +33,9 @@ class Entity(pg.sprite.Sprite):
     @abstractmethod
     def load_image(self):
         pass
+
+    def refresh_image(self):
+        self.image = self.load_image().convert()
 
     def get_size(self):
         return self.image.width, self.image.height
@@ -72,13 +76,6 @@ class Entity(pg.sprite.Sprite):
             self.next_move = additional_move
         else:
             self.next_move = tuple(i + j for i, j in zip(self.next_move, additional_move))
-
-    def move(self, x, y, inplace=True):
-        cur_x, cur_y = self.position
-        new_position = (cur_x + x, cur_y + y)
-        if inplace:
-            self.position = new_position
-        return new_position
 
     def is_deadly(self):
         return False
