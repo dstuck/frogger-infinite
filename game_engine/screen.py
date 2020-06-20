@@ -102,7 +102,7 @@ class Screen:
         for other in self.entities:
             if other == entity:
                 continue
-            if other.rect.colliderect(entity):
+            if other.rect.colliderect(proposed_rect):
 
                 entity.collide(other)
                 other.collide(entity)
