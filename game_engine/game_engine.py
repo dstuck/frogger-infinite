@@ -5,6 +5,7 @@ from frogger_infinite.screens.frogger_fields_screen import FroggerFieldsScreen
 from frogger_infinite.screens.frogger_main_screen import FroggerMainScreen
 from frogger_infinite import SCREEN_SIZE
 import game_engine.game_states as game_states
+from frogger_infinite.screens.frogger_start_screen import FroggerStartScreen
 from game_engine.grid_utils import get_grid_center
 
 
@@ -20,11 +21,13 @@ class GameEngine:
         self.current_screen = None
         self.player = None
         self.screens = {
+            'frogger_start': FroggerStartScreen(self.surface),
             'frogger_main': FroggerMainScreen(self.surface),
             'frogger_fields': FroggerFieldsScreen(self.surface),
         }
         self.reset_player()
         self.state = game_states.RUNNING
+        self.set_current_screen('frogger_start')
 
     def reset_player(self):
         init_position = get_grid_center(5, 14)
