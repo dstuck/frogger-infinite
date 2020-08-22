@@ -23,6 +23,7 @@ class Screen:
         self.pressed_keys = set()
         self.image = self.load_image()
         self.new_state = None
+        self.new_screen = None
 
         self.setup_screen()
 
@@ -49,6 +50,10 @@ class Screen:
             entity.process_event(event)
 
     def update(self):
+        """
+        Update all entities in screen for this tic
+        :return:
+        """
         for entity in self.entities:
             entity.update()
             self.attempt_move(entity)
@@ -56,6 +61,11 @@ class Screen:
         if self.player.is_dead or self.player.has_won:
             self.new_state = game_states.DEAD
         self.pressed_keys = set()
+        self.check_player_for_adjacent_screen()
+        if self.new_screen:
+            screen = self.new_screen
+            self.new_screen = None
+            return screen
 
     def attempt_move(self, entity):
         ### For some reason it looks like we don't actually handle not colliding with solid objects
@@ -122,24 +132,25 @@ class Screen:
     def _is_past_right(self, rect):
         return rect.right > self.get_size()[0]
 
-    def check_for_new_screen(self, rect):
+    def check_player_for_adjacent_screen(self):
+        rect = self.player.rect.copy()
         for key in self.adjacent_screens:
             if self.check_cardinal(rect, key) or self.check_custom_adjacent_screen(rect, key):
-                LOGGER.debug('switching screens {}: {}'.format(key, self.adjacent_screens[key]))
-                return self.adjacent_screens[key]
+                LOGGER.info('switching screens {}: {}'.format(key, self.adjacent_screens[key]))
+                self.new_screen = self.adjacent_screens[key]
 
     def check_cardinal(self, rect, direction):
-        if (
-            (direction in UP_DIRECTIONS and self._is_past_up(rect))
-            or (direction in DOWN_DIRECTIONS and self._is_past_down(rect))
-        ):
-            self.flip_vertically(self.player)
+        if direction in UP_DIRECTIONS and self._is_past_up(rect):
+            self.player.rect.bottom = self.get_size()[1]
             return True
-        if (
-            (direction in LEFT_DIRECTIONS and self._is_past_left(rect))
-            or (direction in RIGHT_DIRECTIONS and self._is_past_right(rect))
-        ):
-            self.flip_horizontally(self.player)
+        elif direction in DOWN_DIRECTIONS and self._is_past_down(rect):
+            self.player.rect.top = 0
+            return True
+        elif direction in LEFT_DIRECTIONS and self._is_past_left(rect):
+            self.player.rect.left = self.get_size()[0]
+            return True
+        elif direction in RIGHT_DIRECTIONS and self._is_past_right(rect):
+            self.player.rect.left = 0
             return True
         return False
 
