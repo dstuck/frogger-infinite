@@ -12,7 +12,7 @@ class Player(Entity):
     def __init__(self, init_position, speed=GridStruct.GRID_SIZE, *groups):
         self.speed = speed
         self.is_dead = False
-        self.has_won = False
+        self.is_home = False
         super().__init__(init_position, *groups)
 
     def load_image(self):
@@ -29,7 +29,7 @@ class Player(Entity):
         if isinstance(other_entity, LillyPad):
             if not other_entity.has_frog and other_entity.fits_on_rect(other_entity.rect):
                 other_entity.add_frog()
-                self.has_won = True
+                self.is_home = True
 
     def process_event(self, event):
         if event.type == pg.KEYDOWN:

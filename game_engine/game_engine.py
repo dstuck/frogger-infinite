@@ -1,11 +1,14 @@
 import pygame as pg
 
-from frogger_infinite.entities.player import Player
-from frogger_infinite.screens.frogger_fields_screen import FroggerFieldsScreen
-from frogger_infinite.screens.frogger_main_screen import FroggerMainScreen
 from frogger_infinite import SCREEN_SIZE
+from frogger_infinite.entities.player import Player
+from frogger_infinite.screens import (
+    FroggerFieldsScreen,
+    FroggerMainScreen,
+    FroggerStartScreen,
+    FroggerVictoryScreen,
+)
 import game_engine.game_states as game_states
-from frogger_infinite.screens.frogger_start_screen import FroggerStartScreen
 from game_engine.grid_utils import get_grid_center
 
 
@@ -19,11 +22,15 @@ class GameEngine:
         self.elapsed = 0
         self.complete = False
         self.current_screen = None
+        self.init_game()
+
+    def init_game(self):
         self.player = None
         self.screens = {
             'frogger_start': FroggerStartScreen(self.surface),
             'frogger_main': FroggerMainScreen(self.surface),
             'frogger_fields': FroggerFieldsScreen(self.surface),
+            'frogger_victory': FroggerVictoryScreen(self.surface),
         }
         self.reset_player()
         self.state = game_states.RUNNING
@@ -72,6 +79,9 @@ class GameEngine:
         elif self.state == game_states.DEAD:
             self.reset_player()
             self.state = game_states.RUNNING
+        elif self.state == game_states.VICTORY:
+            self.init_game()
+            self.set_current_screen('frogger_victory')
 
         self.elapsed = self.clock.tick(self.fps)
 
