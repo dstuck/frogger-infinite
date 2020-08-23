@@ -13,6 +13,8 @@ LEFT_DIRECTIONS = set(['west', 'left'])
 DOWN_DIRECTIONS = set(['south', 'down'])
 RIGHT_DIRECTIONS = set(['east', 'right'])
 
+N_SUCCESS_FOR_VICTORY = 5
+
 class Screen:
     def __init__(self, surface):
         self.surface = surface
@@ -24,6 +26,7 @@ class Screen:
         self.image = self.load_image()
         self.new_state = None
         self.new_screen = None
+        self.successes = 0
 
         self.setup_screen()
 
@@ -58,8 +61,16 @@ class Screen:
             entity.update()
             self.attempt_move(entity)
 
-        if self.player.is_dead or self.player.has_won:
+        if self.player.is_dead:
             self.new_state = game_states.DEAD
+        elif self.player.is_home:
+            self.successes += 1
+            if self.successes >= N_SUCCESS_FOR_VICTORY:
+                self.successes = 0
+                self.new_state = game_states.VICTORY
+            else:
+                self.new_state = game_states.DEAD
+
         self.pressed_keys = set()
         self.check_player_for_adjacent_screen()
         if self.new_screen:

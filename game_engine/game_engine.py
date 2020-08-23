@@ -19,6 +19,9 @@ class GameEngine:
         self.elapsed = 0
         self.complete = False
         self.current_screen = None
+        self.init_game()
+
+    def init_game(self):
         self.player = None
         self.screens = {
             'frogger_start': FroggerStartScreen(self.surface),
@@ -72,6 +75,9 @@ class GameEngine:
         elif self.state == game_states.DEAD:
             self.reset_player()
             self.state = game_states.RUNNING
+        elif self.state == game_states.VICTORY:
+            self.set_current_screen('frogger_start')
+            self.init_game()
 
         self.elapsed = self.clock.tick(self.fps)
 
