@@ -79,10 +79,12 @@ class Screen:
             return screen
 
     def attempt_move(self, entity):
-        ### For some reason it looks like we don't actually handle not colliding with solid objects
         if entity.next_move or entity == self.player:
             next_position = entity.pop_next_position()
-            if not self.check_entity_collisions(entity, next_position):
+            proposed_rect = entity.rect.copy()
+            proposed_rect.center = next_position
+            # TODO: inbounds should check after screen change
+            if not self.check_entity_collisions(entity, proposed_rect) and self.in_bounds(proposed_rect):
                 entity.position = next_position
 
     def draw(self):
@@ -109,17 +111,15 @@ class Screen:
 
     def in_bounds(self, new_rect):
         return not (
-            self._is_past_up(new_rect)
-            or self._is_past_left(new_rect)
-            or self._is_past_down(new_rect)
-            or self._is_past_right(new_rect)
+            self._is_out_up(new_rect)
+            or self._is_out_left(new_rect)
+            or self._is_out_down(new_rect)
+            or self._is_out_right(new_rect)
         )
 
-    def check_entity_collisions(self, entity, next_position):
+    def check_entity_collisions(self, entity, proposed_rect):
         if not entity.is_solid():
             return False
-        proposed_rect = entity.rect.copy()
-        proposed_rect.center = next_position
         for other in self.entities:
             if other == entity:
                 continue
@@ -142,6 +142,18 @@ class Screen:
 
     def _is_past_right(self, rect):
         return rect.right > self.get_size()[0]
+
+    def _is_out_up(self, rect):
+        return rect.bottom < 0
+
+    def _is_out_left(self, rect):
+        return rect.right < 0
+
+    def _is_out_down(self, rect):
+        return rect.top > self.get_size()[1]
+
+    def _is_out_right(self, rect):
+        return rect.left > self.get_size()[0]
 
     def check_player_for_adjacent_screen(self):
         rect = self.player.rect.copy()
